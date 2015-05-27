@@ -1,55 +1,67 @@
 <?php
-
 namespace AppBundle\Tests\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Liip\FunctionalTestBundle\Test\WebTestCase;
+use AppBundle\DataFixtures\ORM\LoadItemData as LoadItemData;
 
-class ItemControllerTest extends WebTestCase
-{
-    /*
-    public function testCompleteScenario()
-    {
-        // Create a new client to browse the application
-        $client = static::createClient();
+class ItemControllerTest extends WebTestCase {
 
-        // Create a new entry in the database
-        $crawler = $client->request('GET', '/item/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode(), "Unexpected HTTP status code for GET /item/");
-        $crawler = $client->click($crawler->selectLink('Create a new entry')->link());
+    
 
-        // Fill in the form and submit it
-        $form = $crawler->selectButton('Create')->form(array(
-            'appbundle_item[field_name]'  => 'Test',
-            // ... other fields to fill
-        ));
-
-        $client->submit($form);
-        $crawler = $client->followRedirect();
-
-        // Check data in the show view
-        $this->assertGreaterThan(0, $crawler->filter('td:contains("Test")')->count(), 'Missing element td:contains("Test")');
-
-        // Edit the entity
-        $crawler = $client->click($crawler->selectLink('Edit')->link());
-
-        $form = $crawler->selectButton('Update')->form(array(
-            'appbundle_item[field_name]'  => 'Foo',
-            // ... other fields to fill
-        ));
-
-        $client->submit($form);
-        $crawler = $client->followRedirect();
-
-        // Check the element contains an attribute with value equals "Foo"
-        $this->assertGreaterThan(0, $crawler->filter('[value="Foo"]')->count(), 'Missing element [value="Foo"]');
-
-        // Delete the entity
-        $client->submit($crawler->selectButton('Delete')->form());
-        $crawler = $client->followRedirect();
-
-        // Check the entity has been delete on the list
-        $this->assertNotRegExp('/Foo/', $client->getResponse()->getContent());
+    public function setUp(){
+        $this->client = static::createClient();
     }
 
-    */
+    protected function assertJsonResponse($response, $statusCode = 200) {
+            $this->assertEquals(
+                $statusCode, $response->getStatusCode(),
+                $response->getContent()
+            );
+            $this->assertTrue(
+                $response->headers->contains('Content-Type', 'application/json'),
+                $response->headers
+            );
+    }
+
+    /**
+     * W rzeczywistej aplikacji napisal bym wiecej testow sprawdzajacych wszystkie 
+     * funkcjonalnosci
+     */
+    public function testAllAction() {
+        $fixtures = array('AppBundle\DataFixtures\ORM\LoadItemData');
+        
+        $this->loadFixtures($fixtures);
+        $members = LoadItemData::$members;
+        
+      
+        
+            $route =  $this->getUrl('item', array('available' => 'true'  ));
+
+            $this->client->request('GET', $route, array('ACCEPT' => 'application/json'));
+            
+            $response = $this->client->getResponse();
+            $content = $response->getContent();
+
+            $this->assertJsonResponse($response, 200);
+            
+            $content = json_decode($response->getContent(),TRUE);
+            
+            
+            $this->assertEquals(json_decode($content['data'],TRUE), array(
+                array(
+                    'id' => $members['it2']->getId(),
+                    'name' => 'test_item2',
+                    'amount' => 4
+                ),
+                array(
+                    'id' => $members['it3']->getId(),
+                    'name' => 'test_item3',
+                    'amount' => 10
+                ),
+            ));
+        
+    }
+
+
+    
 }
