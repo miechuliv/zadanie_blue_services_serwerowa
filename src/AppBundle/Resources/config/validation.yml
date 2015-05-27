@@ -1,0 +1,7 @@
+AppBundle\Entity\Item:
+    properties:
+        name:
+            - NotBlank: ~
+        amount:
+            - NotBlank: ~
+            - Regex: /\d+/

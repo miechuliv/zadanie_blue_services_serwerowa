@@ -1,0 +1,4 @@
+app_item:
+    resource: "@AppBundle/Resources/config/routing/item.yml"
+    prefix:   /item
+

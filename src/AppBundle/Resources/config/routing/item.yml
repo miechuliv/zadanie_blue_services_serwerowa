@@ -1,0 +1,28 @@
+item:
+    path:     /
+    defaults: { _controller: "AppBundle:Item:index" }
+    methods:  [GET]
+
+item_show:
+    path:     /{id}/
+    defaults: { _controller: "AppBundle:Item:show" }
+    methods:  [GET]
+
+
+
+item_create:
+    path:     /
+    defaults: { _controller: "AppBundle:Item:create" }
+    methods:  [PUT]
+
+
+
+item_update:
+    path:     /{id}/
+    defaults: { _controller: "AppBundle:Item:update" }
+    methods:  [PUT]
+
+item_delete:
+    path:     /{id}/
+    defaults: { _controller: "AppBundle:Item:delete" }
+    methods:  [DELETE]
